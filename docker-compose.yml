@@ -8,7 +8,9 @@ services:
       - "15672:15672"
 
   manager:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile_manager
     volumes:
       - data_volume:/data
     depends_on:
@@ -17,8 +19,9 @@ services:
       - "8000:8000"
 
   worker:
-    build: .
-    command: celery -A ai_1.worker worker --loglevel=info
+    build:
+      context: .
+      dockerfile: Dockerfile_worker
     volumes:
       - data_volume:/data
     depends_on:
