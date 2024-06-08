@@ -8,7 +8,7 @@ import uuid
 app = FastAPI()
 
 celery = Celery('tasks', broker='pyamqp://guest@rabbitmq//')
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="manager/templates")
 
 @app.post("/submit_task", response_class=RedirectResponse)
 async def submit_task(video: UploadFile = File(...), image: UploadFile = File(...)):
@@ -18,7 +18,7 @@ async def submit_task(video: UploadFile = File(...), image: UploadFile = File(..
         video_file.write(await video.read())
     with open(image_filename, "wb") as image_file:
         image_file.write(await image.read())
-    task = celery.send_task('worker.process_deepfake', args=[video_filename, image_filename])
+    task = celery.send_task('ai_1.worker.process_deepfake', args=[video_filename, image_filename])
     return RedirectResponse(url="/success", status_code=303)
 
 @app.get("/success")
