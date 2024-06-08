@@ -4,19 +4,10 @@ import time
 app = Celery('worker', broker='pyamqp://guest@rabbitmq//', backend='rpc://')
 
 @app.task
-def fibonacci(n):
-    def fib(n):
-        a, b = 0, 1
-        for _ in range(n):
-            a, b = b, a + b
-        return a
-    result = fib(n)
-    # Simulate long-running task
-
+def process_deepfake(video_path, image_path):
+    # Simulate a long processing task
+    import shutil
+    output_video_path = video_path.replace(".mp4", "_processed.mp4")
+    shutil.copy(video_path, output_video_path)  # Simulation de la création d'un deepfake
     time.sleep(10)
-    print("plus que 10 sc")
-    time.sleep(10)
-    # Write result to a shared volume
-    with open(f"/data/{fibonacci.request.id}.txt", "w") as file:
-        file.write(str(result))
-    return result
+    return output_video_path.split('/')[-1]
