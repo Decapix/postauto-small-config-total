@@ -8,13 +8,14 @@
     <ul>
         {% for result in results %}
         <li>
-            Task ID: {{ result.id }} - {{ result.filename }}
+            Video Filename: {{ result.filename }}
             <a href="/video/{{ result.filename }}" download>Download Video</a>
             <form action="/delete_video/{{ result.filename }}" method="post">
                 <button type="submit">Delete Video</button>
             </form>
         </li>
         {% endfor %}
+        
     </ul>
 </body>
 </html>
