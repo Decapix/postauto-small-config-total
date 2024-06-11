@@ -1,28 +1,42 @@
+import time
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from celery import Celery
 import os
-import uuid
+import secrets
+from pathlib import Path
+import shutil
 
 app = FastAPI()
 
 celery = Celery('tasks', broker='pyamqp://guest@rabbitmq//')
 templates = Jinja2Templates(directory="templates")
 
+
 @app.post("/submit_task", response_class=RedirectResponse)
 async def submit_task(video: UploadFile = File(...), image: UploadFile = File(...)):
-    video_uuid = uuid.uuid4()
-    video_name = f"{video.filename.replace('.mp4', '')}_{video_uuid}"
-    video_filename = f"/data/uploads/videos/{video_name}.mp4"
-    image_filename = f"/data/uploads/images/{image.filename.replace('.png', '')}_{uuid.uuid4()}.png"
-    output_path =  f"/data/results/{video_name}.mp4"
+    video_uuid = secrets.token_hex(8)
+    video_name = f"{video.filename.replace('.mp4', '')}_{video_uuid}.mp4"
+    image_uuid = secrets.token_hex(8)
+    image_name = f"{image.filename.replace('.png', '')}_{image_uuid}.png"
+
+    video_filename = f"/data/uploads/videos/{video_name}"
+    image_filename = f"/data/uploads/images/{image_name}"
+
+
+    # Save video
     with open(video_filename, "wb") as video_file:
         video_file.write(await video.read())
+    # Save image
     with open(image_filename, "wb") as image_file:
         image_file.write(await image.read())
-    task = celery.send_task('worker.process_deepfake', args=[video_filename, image_filename, output_path])
+
+    # Send task to Celery
+    task = celery.send_task('worker.process_deepfake', args=[video_filename, image_filename, video_name])
     return RedirectResponse(url="/success", status_code=303)
+
+
 
 @app.get("/success")
 async def submission_success(request: Request):

@@ -7,18 +7,14 @@ services:
       - "5672:5672"
       - "15672:15672"
   
-  # postgresl 
-
-  # caddy for manager address in public
-
   manager:
     build:
       context: .
       dockerfile: Dockerfile_manager
     volumes:
-      - data_volume:/data/uploads/videos
-      - data_volume:/data/uploads/images
-      - data_volume:/data/results
+      - videos_volume:/data/uploads/videos
+      - images_volume:/data/uploads/images
+      - results_volume:/data/results
     depends_on:
       - rabbitmq
     ports:
@@ -29,11 +25,13 @@ services:
       context: .
       dockerfile: Dockerfile_worker
     volumes:
-      - data_volume:/data/uploads/videos
-      - data_volume:/data/uploads/images
-      - data_volume:/data/results
+      - videos_volume:/data/uploads/videos
+      - images_volume:/data/uploads/images
+      - results_volume:/data/results
     depends_on:
       - rabbitmq
 
 volumes:
-  data_volume:
+  videos_volume:
+  images_volume:
+  results_volume:
