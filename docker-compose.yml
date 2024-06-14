@@ -1,6 +1,12 @@
 version: '3.8'
 
 services:
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+
   rabbitmq:
     image: "rabbitmq:3-management"
     ports:
@@ -17,6 +23,7 @@ services:
       - results_volume:/data/results
     depends_on:
       - rabbitmq
+      - redis
     ports:
       - "8000:8000"
 
@@ -30,6 +37,7 @@ services:
       - results_volume:/data/results
     depends_on:
       - rabbitmq
+      - redis
 
 volumes:
   videos_volume:

@@ -16,6 +16,14 @@ COPY ./app/ai_1/requirements_worker.txt .
 
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements_worker.txt
+
+
+# Ajouter un utilisateur non root
+#RUN adduser --disabled-password --gecos '' myuser
+#USER myuser
+
+
+
 COPY ./app/ai_1 /app/ai_1
 
 CMD ["celery", "-A", "worker", "worker", "--loglevel=info"]

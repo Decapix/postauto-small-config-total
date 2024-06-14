@@ -6,7 +6,7 @@ import stat
 
 
 
-app = Celery('worker', broker='pyamqp://guest@rabbitmq//', backend='rpc://')
+app = Celery('worker', broker='pyamqp://guest@rabbitmq//', backend='redis://redis:6379/0')
 
 
 BASE_DIR_CONTROLLER = Path(__file__).resolve().parent / "facefusion"

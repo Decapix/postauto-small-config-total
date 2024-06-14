@@ -1,5 +1,5 @@
 celery
-
+redis
 
 aiofiles==23.2.1
 altair==5.3.0
