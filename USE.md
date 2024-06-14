@@ -1,7 +1,7 @@
 interface
 
 docker-compose up --build --remove-orphan
-docker-compose down
+docker-compose down -v
 
 
 

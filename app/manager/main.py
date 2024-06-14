@@ -5,8 +5,7 @@ from fastapi.templating import Jinja2Templates
 from celery import Celery
 import os
 import secrets
-from pathlib import Path
-import shutil
+import stat
 
 app = FastAPI()
 
@@ -62,8 +61,31 @@ async def delete_video(filename: str):
 
 @app.get("/video/{filename}", response_class=FileResponse)
 async def get_video(filename: str):
+    print("read_file_permissions 3")
+    read_file_permissions(f"/data/results/{filename}") 
     return FileResponse(path=f"/data/results/{filename}", filename=filename, media_type='video/mp4')
 
 @app.get("/")
 async def submit_form(request: Request):
     return templates.TemplateResponse("submit_form.html", {"request": request})
+
+
+
+
+
+
+
+
+def read_file_permissions(file_path):
+    # Vérifie si le fichier existe
+    if not os.path.exists(file_path):
+        print("Le fichier spécifié n'existe pas.")
+        return
+
+    # Obtenir les permissions du fichier
+    file_stat = os.stat(file_path)
+    permissions = stat.filemode(file_stat.st_mode)
+    print(f"Les permissions du fichier {file_path} sont : {permissions}")
+
+# Exemple d'utilisation :
+# read_file_permissions('/chemin/vers/le/fichier')
