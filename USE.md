@@ -9,3 +9,5 @@ cd /home/solenopsis/Documents/work-business/barque-postauto/dev/total-project-ve
 git add .
 git commit -m "okok"
 git push
+
+okok
